@@ -36,3 +36,4 @@
       password: "{{ F5_PASSWORD }}"
       server_port: "8443"
       name: "{{hostvars[item].inventory_hostname}}"
+    loop: "{{ groups['webservers'] }}"
