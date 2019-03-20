@@ -1,0 +1,25 @@
+---
+- name: BIG-IP SETUP
+  hosts: lb
+  connection: local
+  gather_facts: false
+  vars_files:
+    - ./vars/default_vars.yml
+    - ./credentials/f5_credentials.yml
+
+  tasks:
+
+  - name: ADD VIRTUAL SERVER
+    bigip_virtual_server:
+      server: "{{ ansible_host }}"
+      user: "{{ F5_USERNAME }}"
+      password: "{{ F5_PASSWORD }}"
+      server_port: "8443"
+      name: "vip"
+      destination: "{{ ansible_host }}"
+      port: "443"
+      enabled_vlans: "all"
+      all_profiles: ['http','clientssl','oneconnect']
+      pool: "http_pool"
+      snat: "Automap"
+      validate_certs: "no"

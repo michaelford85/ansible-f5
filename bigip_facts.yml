@@ -1,0 +1,31 @@
+---
+- name: GRAB F5 FACTS
+  hosts: f5
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./vars/default_vars.yml
+    - ./credentials/f5_credentials.yml
+
+  tasks:
+    - name: COLLECT BIG-IP FACTS
+      bigip_facts:
+        include: system_info
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: 8443
+        validate_certs: no
+      register: bigip_facts
+
+    - name: COMPLETE BIG-IP SYSTEM INFORMATION
+      debug:
+        var: bigip_facts
+
+    - name: DISPLAY ONLY THE MAC ADDRESS
+      debug:
+        var: bigip_facts['ansible_facts']['system_info']['base_mac_address']
+
+    - name: DISPLAY ONLY THE VERSION
+      debug:
+        var: bigip_facts['ansible_facts']['system_info']['product_information']['product_version']
