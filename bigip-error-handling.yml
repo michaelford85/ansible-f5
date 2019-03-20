@@ -55,7 +55,7 @@
             password: "{{ F5_PASSWORD }}"
             server_port: "8443"
             name: "vip"
-            destination: "{{private_ip}}"
+            destination: "{{ ansible_host }}"
             port: "443"
             enabled_vlans: "all"
             all_profiles: ['http','clientssl','oneconnect']
