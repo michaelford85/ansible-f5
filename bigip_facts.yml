@@ -9,8 +9,8 @@
 
   tasks:
     - name: COLLECT BIG-IP FACTS
-      bigip_device_facts:
-        include: system-info
+      bigip_facts:
+        include: system_info
         server: "{{ ansible_host }}"
         user: "{{ F5_USERNAME }}"
         password: "{{ F5_PASSWORD }}"
