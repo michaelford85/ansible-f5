@@ -6,19 +6,22 @@
   vars_files:
     - ./vars/default_vars.yml
     - ./credentials/f5_credentials.yml
+  vars:
+    pool_name: http_pool
 
   tasks:
 
   - name: ADD POOL MEMBERS
     bigip_pool_member:
-      server: "{{ ansible_host }}"
-      user: "{{ F5_USERNAME }}"
-      password: "{{ F5_PASSWORD }}"
-      server_port: "8443"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
       state: "present"
       name: "{{hostvars[item].inventory_hostname}}"
       host: "{{hostvars[item].ansible_host}}"
       port: "80"
-      pool: "http_pool"
-      validate_certs: "no"
+      pool: "{{ pool_name }}"
     loop: "{{ groups['webservers'] }}"
