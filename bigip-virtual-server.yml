@@ -8,6 +8,7 @@
     - ./credentials/f5_credentials.yml
   vars:
     pool_name: http_pool
+    vip_name: vip
 
   tasks:
 
@@ -19,7 +20,7 @@
         password: "{{ F5_PASSWORD }}"
         server_port: "8443"
         validate_certs: "no"
-      name: "vip"
+      name: "{{ vip_name }}"
       destination: "{{ ansible_host }}"
       port: "443"
       enabled_vlans: "all"
