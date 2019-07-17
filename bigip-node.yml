@@ -11,10 +11,11 @@
 
   - name: CREATE NODES
     bigip_node:
-      server: "{{ ansible_host }}"
-      user: "{{ F5_USERNAME }}"
-      password: "{{ F5_PASSWORD }}"
-      server_port: "8443"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
       host: "{{hostvars[item].ansible_host}}"
       name: "{{hostvars[item].inventory_hostname}}"
       validate_certs: "no"
