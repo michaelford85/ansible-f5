@@ -11,10 +11,12 @@
 
   - name: ADD VIRTUAL SERVER
     bigip_virtual_server:
-      server: "{{ ansible_host }}"
-      user: "{{ F5_USERNAME }}"
-      password: "{{ F5_PASSWORD }}"
-      server_port: "8443"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
       name: "vip"
       destination: "{{ ansible_host }}"
       port: "443"
@@ -22,4 +24,3 @@
       all_profiles: ['http','clientssl','oneconnect']
       pool: "http_pool"
       snat: "Automap"
-      validate_certs: "no"
