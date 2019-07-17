@@ -16,7 +16,7 @@
         user: "{{ F5_USERNAME }}"
         password: "{{ F5_PASSWORD }}"
         server_port: "8443"
+        validate_certs: "no"
       host: "{{hostvars[item].ansible_host}}"
       name: "{{hostvars[item].inventory_hostname}}"
-      validate_certs: "no"
     loop: "{{ groups['webservers'] }}"
