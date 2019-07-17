@@ -6,17 +6,20 @@
   vars_files:
     - ./vars/default_vars.yml
     - ./credentials/f5_credentials.yml
+  vars:
+    pool_name: http_pool
 
   tasks:
 
   - name: CREATE POOL
     bigip_pool:
-      server: "{{ ansible_host }}"
-      user: "{{ F5_USERNAME }}"
-      password: "{{ F5_PASSWORD }}"
-      server_port: "8443"
-      name: "http_pool"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
+      name: "{{ pool_name }}"
       lb_method: "round-robin"
       monitors: "/Common/http"
       monitor_type: "and_list"
-      validate_certs: "no"
