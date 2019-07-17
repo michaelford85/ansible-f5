@@ -6,36 +6,44 @@
   vars_files:
     - ./vars/default_vars.yml
     - ./credentials/f5_credentials.yml
+  vars:
+    pool_name: http_pool
+    vip_name: vip
 
   tasks:
 
   - name: DELETE VIRTUAL SERVER
     bigip_virtual_server:
-      server: "{{ ansible_host }}"
-      user: "{{ F5_USERNAME }}"
-      password: "{{ F5_PASSWORD }}"
-      server_port: "8443"
-      name: "vip"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
+      name: "{{ vip_name }}"
       state: absent
-      validate_certs: "no"
+
 
   - name: DELETE POOL
     bigip_pool:
-      server: "{{ ansible_host }}"
-      user: "{{ F5_USERNAME }}"
-      password: "{{ F5_PASSWORD }}"
-      server_port: "8443"
-      name: "http_pool"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
+      name: "{{ pool_name }}"
       state: absent
-      validate_certs: "no"
+
 
   - name: DELETE NODES
     bigip_node:
-      server: "{{ ansible_host }}"
-      user: "{{ F5_USERNAME }}"
-      password: "{{ F5_PASSWORD }}"
-      server_port: "8443"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
       name: "{{hostvars[item].inventory_hostname}}"
-      validate_certs: "no"
       state: absent
     loop: "{{ groups['webservers'] }}"
