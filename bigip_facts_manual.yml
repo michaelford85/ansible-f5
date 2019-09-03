@@ -25,8 +25,8 @@
 
     - name: DISPLAY ONLY THE MAC ADDRESS
       debug:
-        var: bigip_facts['ansible_facts']['system_info']['base_mac_address']
+        var: bigip_facts['system_info']['base_mac_address']
 
     - name: DISPLAY ONLY THE VERSION
       debug:
-        var: bigip_facts['ansible_facts']['system_info']['product_information']['product_version']
+        var: bigip_facts['system_info']['product_version']
