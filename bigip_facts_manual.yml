@@ -9,12 +9,14 @@
   tasks:
     - name: COLLECT BIG-IP FACTS
       bigip_device_facts:
-        include: system-info
-        server: "{{ ansible_host }}"
-        user: "{{ F5_USERNAME }}"
-        password: "{{ F5_PASSWORD }}"
-        server_port: 8443
-        validate_certs: no
+        gather_subset:
+          - system-info
+        provider:
+          server: "{{ ansible_host }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: 8443
+          validate_certs: no
       register: bigip_facts
 
     - name: COMPLETE BIG-IP SYSTEM INFORMATION
