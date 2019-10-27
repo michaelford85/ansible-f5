@@ -1,6 +1,6 @@
+nodes_to_add:
 {% for item in survey_nodes.split('\n') %}
 {%     set list = item.split(",") %}
-nodes_to_add:
   name: {{ list[0]|trim() }}
   address: {{ list[1]|trim() }}
 {% endfor %}
