@@ -20,6 +20,8 @@
     - name: Include nodes_to_add.yml
       include_vars:
         file: ".vars/nodes_to_add.yml"
+      delegate_to: localhost
+      run_once: yes
 
     - name: CREATE NODES
       bigip_node:
