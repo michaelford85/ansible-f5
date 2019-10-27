@@ -61,7 +61,7 @@
           server_port: "{{ bigip_port }}"
           validate_certs: "no"
         name: "{{ vip_name }}"
-        destination: "{{ ansible_host }}"
+        destination: "{{ bigip_appliance }}"
         port: "{{ port_vip }}"
         enabled_vlans: "all"
         all_profiles: ['http','clientssl','oneconnect']
