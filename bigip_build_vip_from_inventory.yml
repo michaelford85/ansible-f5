@@ -1,6 +1,6 @@
 ---
 - name: Build new VIP
-  hosts: "{{ bigip_appliance }}"
+  hosts: localhost
   connection: local
   gather_facts: no
   vars_files:
