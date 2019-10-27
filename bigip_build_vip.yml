@@ -35,24 +35,62 @@
         name: "{{ item.value.name }}"
       loop: "{{ lookup('dict', nodes_to_add) }}"
 
-    # - name: COLLECT BIG-IP FACTS
-    #   bigip_facts:
-    #     include: system_info
-    #     server: "{{ ansible_host }}"
-    #     user: "{{ F5_USERNAME }}"
-    #     password: "{{ F5_PASSWORD }}"
-    #     server_port: 8443
-    #     validate_certs: no
-    #   register: bigip_facts
-    #
-    # - name: COMPLETE BIG-IP SYSTEM INFORMATION
-    #   debug:
-    #     var: bigip_facts
-    #
-    # - name: DISPLAY ONLY THE MAC ADDRESS
-    #   debug:
-    #     var: bigip_facts['ansible_facts']['system_info']['base_mac_address']
-    #
-    # - name: DISPLAY ONLY THE VERSION
-    #   debug:
-    #     var: bigip_facts['ansible_facts']['system_info']['product_information']['product_version']
+    - name: CREATE POOL
+      bigip_pool:
+        provider:
+          server: "{{ ansible_host }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: "{{ bigip_port }}"
+          validate_certs: "no"
+        name: "{{ pool_name }}"
+        lb_method: "{{ lbmethod }}"
+        monitors: "/Common/http"
+        monitor_type: "and_list"
+
+    - name: ADD POOL MEMBERS
+      bigip_pool_member:
+        provider:
+          server: "{{ ansible_host }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: "{{ bigip_port }}"
+          validate_certs: "no"
+        state: "present"
+        host: "{{ item.value.address}}"
+        name: "{{ item.value.name }}"
+        port: "80"
+        pool: "{{ pool_name }}"
+      loop: "{{ lookup('dict', nodes_to_add) }}"
+
+    - name: ADD VIRTUAL SERVER
+      bigip_virtual_server:
+        provider:
+          server: "{{ ansible_host }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: "{{ bigip_port }}"
+          validate_certs: "no"
+        name: "{{ vip_name }}"
+        destination: "{{ ansible_host }}"
+        port: "443"
+        enabled_vlans: "all"
+        all_profiles: ['http','clientssl','oneconnect']
+        pool: "{{ pool_name }}"
+        snat: "Automap"
+
+    - name: Create an incident
+      snow_record:
+        username: "{{ SNOW_USERNAME }}"
+        password: "{{ SNOW_PASSWORD }}"
+        instance: dev71868
+        state: present
+        data:
+          short_description: "Successfully completed VIP creation"
+          severity: 3
+          priority: 2
+      register: new_incident
+
+     - name: Show incident details
+       debug:
+         var: new_incident
