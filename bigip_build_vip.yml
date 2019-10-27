@@ -33,7 +33,7 @@
           validate_certs: "no"
         host: "{{ item.value.address}}"
         name: "{{ item.value.name }}"
-      loop: "{{ nodes_to_add }}"
+      loop: "{{ lookup('dict', nodes_to_add) }}"
 
     # - name: COLLECT BIG-IP FACTS
     #   bigip_facts:
