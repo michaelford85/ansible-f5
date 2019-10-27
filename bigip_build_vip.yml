@@ -6,6 +6,8 @@
   vars_files:
     - ./vars/default_vars.yml
     - ./credentials/f5_credentials.yml
+    - ./credentials/snow_credentials.yml
+
   # vars:
   #   - nodes_to_add: "{{ survey_nodes.split('\n') }}"
 
