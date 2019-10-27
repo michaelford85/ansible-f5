@@ -12,19 +12,6 @@
   #   - nodes_to_add: "{{ survey_nodes.split('\n') }}"
 
   tasks:
-    - name: Create Variable File
-      template:
-        src: "./templates/template_nodes.j2"
-        dest: "./vars/nodes_to_add.yml"
-      delegate_to: localhost
-      run_once: yes
-
-    - name: Include nodes_to_add.yml
-      include_vars:
-        file: "./vars/nodes_to_add.yml"
-      delegate_to: localhost
-      run_once: yes
-
     - name: CREATE NODES
       bigip_node:
         provider:
