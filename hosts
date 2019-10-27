@@ -2,11 +2,11 @@
 ansible_port=22
 
 [lb]
-f5 ansible_host=54.227.224.159
+f5 ansible_host=54.243.24.56
 
 [control]
-ansible ansible_host=3.94.192.67
+ansible ansible_host=tower.michaelanthonyford.com
 
 [webservers]
-host1 ansible_host=3.88.235.108
-host2 ansible_host=3.88.180.52
+host1 ansible_host=52.55.178.153
+host2 ansible_host=3.80.47.96

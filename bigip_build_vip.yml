@@ -1,0 +1,49 @@
+---
+- name: Build new VIP
+  hosts: f5
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./vars/default_vars.yml
+    - ./credentials/f5_credentials.yml
+  # vars:
+  #   - nodes_to_add: "{{ survey_nodes.split('\n') }}"
+
+  tasks:
+    - name: Create Variable File
+      template:
+        src: "./templates/template_nodes.j2"
+        dest: "./vars/nodes_to_add.yml"
+    # - name: CREATE NODES
+    #   bigip_node:
+    #     provider:
+    #       server: "{{ ansible_host }}"
+    #       user: "{{ F5_USERNAME }}"
+    #       password: "{{ F5_PASSWORD }}"
+    #       server_port: "{{ bigip_port }}"
+    #       validate_certs: "no"
+    #     host: "{{hostvars[item].ansible_host}}"
+    #     name: "{{hostvars[item].inventory_hostname}}"
+    #   loop: "{{ nodes_to_add }}"
+    #
+    # - name: COLLECT BIG-IP FACTS
+    #   bigip_facts:
+    #     include: system_info
+    #     server: "{{ ansible_host }}"
+    #     user: "{{ F5_USERNAME }}"
+    #     password: "{{ F5_PASSWORD }}"
+    #     server_port: 8443
+    #     validate_certs: no
+    #   register: bigip_facts
+    #
+    # - name: COMPLETE BIG-IP SYSTEM INFORMATION
+    #   debug:
+    #     var: bigip_facts
+    #
+    # - name: DISPLAY ONLY THE MAC ADDRESS
+    #   debug:
+    #     var: bigip_facts['ansible_facts']['system_info']['base_mac_address']
+    #
+    # - name: DISPLAY ONLY THE VERSION
+    #   debug:
+    #     var: bigip_facts['ansible_facts']['system_info']['product_information']['product_version']
