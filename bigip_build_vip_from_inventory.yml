@@ -1,0 +1,98 @@
+---
+- name: Build new VIP
+  hosts: "{{ bigip_appliance }}"
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./vars/default_vars.yml
+    - ./credentials/f5_credentials.yml
+    - ./credentials/snow_credentials.yml
+
+  # vars:
+  #   - nodes_to_add: "{{ survey_nodes.split('\n') }}"
+
+  tasks:
+    - name: Create Variable File
+      template:
+        src: "./templates/template_nodes.j2"
+        dest: "./vars/nodes_to_add.yml"
+      delegate_to: localhost
+      run_once: yes
+
+    - name: Include nodes_to_add.yml
+      include_vars:
+        file: "./vars/nodes_to_add.yml"
+      delegate_to: localhost
+      run_once: yes
+
+    - name: CREATE NODES
+      bigip_node:
+        provider:
+          server: "{{ bigip_appliance }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: "{{ bigip_port }}"
+          validate_certs: "no"
+        host: "{{hostvars[item].ansible_host}}"
+        name: "{{hostvars[item].inventory_hostname}}"
+      loop: "{{ groups['webservers'] }}"
+
+    - name: CREATE POOL
+      bigip_pool:
+        provider:
+          server: "{{ bigip_appliance }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: "{{ bigip_port }}"
+          validate_certs: "no"
+        name: "{{ pool_name }}"
+        lb_method: "{{ lbmethod }}"
+        monitors: "/Common/http"
+        monitor_type: "and_list"
+
+    - name: ADD POOL MEMBERS
+      bigip_pool_member:
+        provider:
+          server: "{{ bigip_appliance }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: "{{ bigip_port }}"
+          validate_certs: "no"
+        state: "present"
+        port: "80"
+        pool: "{{ pool_name }}"
+        host: "{{hostvars[item].ansible_host}}"
+        name: "{{hostvars[item].inventory_hostname}}"
+      loop: "{{ groups['webservers'] }}"
+
+    - name: ADD VIRTUAL SERVER
+      bigip_virtual_server:
+        provider:
+          server: "{{ bigip_appliance }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: "{{ bigip_port }}"
+          validate_certs: "no"
+        name: "{{ vip_name }}"
+        destination: "{{ ansible_host }}"
+        port: "443"
+        enabled_vlans: "all"
+        all_profiles: ['http','clientssl','oneconnect']
+        pool: "{{ pool_name }}"
+        snat: "Automap"
+
+    - name: Create an incident
+      snow_record:
+        username: "{{ SNOW_USERNAME }}"
+        password: "{{ SNOW_PASSWORD }}"
+        instance: dev71868
+        state: present
+        data:
+          short_description: "Successfully completed VIP creation"
+          severity: 3
+          priority: 2
+      register: new_incident
+
+    - name: Show incident details
+      debug:
+        var: new_incident
