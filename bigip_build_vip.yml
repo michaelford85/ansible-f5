@@ -14,18 +14,25 @@
       template:
         src: "./templates/template_nodes.j2"
         dest: "./vars/nodes_to_add.yml"
-    # - name: CREATE NODES
-    #   bigip_node:
-    #     provider:
-    #       server: "{{ ansible_host }}"
-    #       user: "{{ F5_USERNAME }}"
-    #       password: "{{ F5_PASSWORD }}"
-    #       server_port: "{{ bigip_port }}"
-    #       validate_certs: "no"
-    #     host: "{{hostvars[item].ansible_host}}"
-    #     name: "{{hostvars[item].inventory_hostname}}"
-    #   loop: "{{ nodes_to_add }}"
-    #
+      delegate_to: localhost
+      run_once: yes
+
+    - name: Include nodes_to_add.yml
+      include_vars:
+        file: ".vars/nodes_to_add.yml"
+
+    - name: CREATE NODES
+      bigip_node:
+        provider:
+          server: "{{ ansible_host }}"
+          user: "{{ F5_USERNAME }}"
+          password: "{{ F5_PASSWORD }}"
+          server_port: "{{ bigip_port }}"
+          validate_certs: "no"
+        host: "{{ item.value.address}}"
+        name: "{{ item.value.name }}"
+      loop: "{{ nodes_to_add }}"
+
     # - name: COLLECT BIG-IP FACTS
     #   bigip_facts:
     #     include: system_info
