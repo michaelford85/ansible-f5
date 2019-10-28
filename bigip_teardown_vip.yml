@@ -1,0 +1,58 @@
+---
+- name: BIG-IP TEARDOWN
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - ./vars/default_vars.yml
+    - ./credentials/f5_credentials.yml
+  vars:
+    pool_name: default_pool
+    vip_name: default_vip
+
+  tasks:
+
+  - name: Create Variable File
+    template:
+      src: "./templates/template_nodes.j2"
+      dest: "./vars/nodes_to_add.yml"
+
+  - name: Include nodes_to_add.yml
+    include_vars:
+      file: "./vars/nodes_to_add.yml"
+
+  - name: DELETE VIRTUAL SERVER
+    bigip_virtual_server:
+      provider:
+        server: "{{ bigip_appliance }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "{{ bigip_port }}"
+        validate_certs: "no"
+      name: "{{ vip_name }}"
+      state: absent
+
+
+  - name: DELETE POOL
+    bigip_pool:
+      provider:
+        server: "{{ bigip_appliance }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "{{ bigip_port }}"
+        validate_certs: "no"
+      name: "{{ pool_name }}"
+      state: absent
+
+
+  - name: DELETE NODES
+    bigip_node:
+      provider:
+        server: "{{ bigip_appliance }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "{{ bigip_port }}"
+        validate_certs: "no"
+      name: "{{hostvars[item].inventory_hostname}}"
+      state: absent
+    loop: "{{ groups['webservers'] }}"
