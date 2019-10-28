@@ -53,6 +53,7 @@
         password: "{{ F5_PASSWORD }}"
         server_port: "{{ bigip_port }}"
         validate_certs: "no"
-      name: "{{hostvars[item].inventory_hostname}}"
       state: absent
-    loop: "{{ groups['webservers'] }}"
+      host: "{{ item.value.address}}"
+      name: "{{ item.value.name }}"
+    loop: "{{ lookup('dict', nodes_to_add) }}"
