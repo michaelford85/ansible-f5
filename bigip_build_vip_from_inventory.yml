@@ -72,7 +72,7 @@
       snow_record:
         username: "{{ SNOW_USERNAME }}"
         password: "{{ SNOW_PASSWORD }}"
-        instance: dev59224
+        instance: dev71868
         state: present
         data:
           short_description: "Successfully completed VIP creation"
