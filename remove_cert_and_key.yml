@@ -1,0 +1,52 @@
+---
+- name: Remove Certs/Key from BIG-IP
+  hosts: lb
+  connection: local
+  gather_facts: false
+  vars_files:
+    - ./vars/default_vars.yml
+    - ./credentials/f5_credentials.yml
+  vars:
+    cert_name: tower_cert
+    key_name: tower_key
+
+  tasks:
+
+  - name: Remove Certificate from BIG-IP
+    bigip_ssl_certificate:
+      name: "{{ cert_name }}"
+      state: absent
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
+
+  - name: Remove Key from BIG-IP
+    bigip_ssl_key:
+      name: "{{ key_name }}"
+      state: absent
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
+
+  ## https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_sys_crypto_pkcs12.html
+  # - uri:
+  #     url: "https://{{ ansible_host }}:8443/mgmt/tm/sys/crypto/pkcs12"
+  #     user: "{{ F5_USERNAME }}"
+  #     password: "{{ F5_PASSWORD }}"
+  #     method: POST
+  #     force_basic_auth: yes
+  #     validate_certs: no
+  #     body_format: json
+  #     body: |
+  #       {
+  #         "command":"install",
+  #         "name":"test",
+  #         "fromLocalFile":"/tmp/ansible.p12"
+  #       }
+  #   delegate_to: localhost
