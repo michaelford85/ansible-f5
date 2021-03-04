@@ -27,7 +27,6 @@
     bigip_ssl_certificate:
       name: "{{ cert_name }}"
       state: present
-      # content: "{{ lookup('file', './certs/tower.cert') }}"
       content: "{{ lookup('env', 'MY_SSL_CERT') }}"
       provider:
         server: "{{ ansible_host }}"
@@ -35,12 +34,12 @@
         password: "{{ F5_PASSWORD }}"
         server_port: "8443"
         validate_certs: "no"
+    no_log: true
 
   - name: Import Key to BIG-IP
     bigip_ssl_key:
       name: "{{ key_name }}"
       state: present
-      # content: "{{ lookup('file', './certs/tower.key') }}"
       content: "{{ lookup('env', 'MY_SSL_KEY') }}"
       provider:
         server: "{{ ansible_host }}"
@@ -48,6 +47,7 @@
         password: "{{ F5_PASSWORD }}"
         server_port: "8443"
         validate_certs: "no"
+    no_log: true
 
   ## https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_sys_crypto_pkcs12.html
   # - uri:
