@@ -28,7 +28,7 @@
       name: "{{ cert_name }}"
       state: present
       # content: "{{ lookup('file', './certs/tower.cert') }}"
-      content: "{{ lookup('env', 'MY_CERT_INI_FILE') }}"
+      content: "{{ lookup('env', 'MY_SSL_CERT') }}"
       provider:
         server: "{{ ansible_host }}"
         user: "{{ F5_USERNAME }}"
@@ -41,7 +41,7 @@
       name: "{{ key_name }}"
       state: present
       # content: "{{ lookup('file', './certs/tower.key') }}"
-      content: "{{ lookup('env', 'MY_KEY_INI_FILE') }}"
+      content: "{{ lookup('env', 'MY_SSL_KEY') }}"
       provider:
         server: "{{ ansible_host }}"
         user: "{{ F5_USERNAME }}"
