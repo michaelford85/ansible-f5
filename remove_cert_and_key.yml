@@ -12,6 +12,12 @@
 
   tasks:
 
+  - name: remove pkcs archive from local storage
+    file:
+      path: /tmp/ansible.p12
+      state: absent
+    delegate_to: localhost
+
   - name: Remove Certificate from BIG-IP
     bigip_ssl_certificate:
       name: "{{ cert_name }}"
