@@ -27,7 +27,8 @@
     bigip_ssl_certificate:
       name: "{{ cert_name }}"
       state: present
-      content: "{{ lookup('file', './certs/tower.cert') }}"
+      # content: "{{ lookup('file', './certs/tower.cert') }}"
+      content: "{{ lookup('env', 'MY_CERT_INI_FILE') }}"
       provider:
         server: "{{ ansible_host }}"
         user: "{{ F5_USERNAME }}"
@@ -39,7 +40,8 @@
     bigip_ssl_key:
       name: "{{ key_name }}"
       state: present
-      content: "{{ lookup('file', './certs/tower.key') }}"
+      # content: "{{ lookup('file', './certs/tower.key') }}"
+      content: "{{ lookup('env', 'MY_KEY_INI_FILE') }}"
       provider:
         server: "{{ ansible_host }}"
         user: "{{ F5_USERNAME }}"
